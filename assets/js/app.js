@@ -943,9 +943,28 @@ async function createAutomation() {
     }
 }
 
-async function loadLogs() {
+async function loadLogs(familyId = '', category = '') {
     try {
-        const result = await api('/logs');
+        const familySelect = document.getElementById('log-family-filter');
+        if (familySelect && familySelect.options.length <= 1) {
+            const familiesResult = await api('/families');
+            if (familiesResult.code === 0 && familiesResult.data) {
+                familiesResult.data.forEach(family => {
+                    const option = document.createElement('option');
+                    option.value = family.id;
+                    option.textContent = family.name;
+                    familySelect.appendChild(option);
+                });
+            }
+        }
+
+        let url = '/logs';
+        const params = [];
+        if (familyId) params.push('family_id=' + familyId);
+        if (category) params.push('category=' + category);
+        if (params.length > 0) url += '?' + params.join('&');
+        
+        const result = await api(url);
         if (result.code === 0) {
             state.logs = result.data;
             renderLogs(state.logs);
@@ -1371,6 +1390,14 @@ function init() {
     document.getElementById('refresh-btn').addEventListener('click', () => {
         loadPageContent(state.currentPage);
         showToast('已刷新', 'success');
+    });
+
+    document.getElementById('log-family-filter').addEventListener('change', (e) => {
+        loadLogs(e.target.value, document.getElementById('log-category-filter').value);
+    });
+
+    document.getElementById('log-category-filter').addEventListener('change', (e) => {
+        loadLogs(document.getElementById('log-family-filter').value, e.target.value);
     });
 
     document.getElementById('modal-container').addEventListener('click', (e) => {

@@ -39,7 +39,11 @@ class LogController extends Controller
             $families = $this->familyModel->getUserFamilies((int) $current_user['id']);
             $logs = [];
             foreach ($families as $family) {
-                $familyLogs = $this->logModel->getByFamily((int) $family['id'], min($limit, 200));
+                if ($category) {
+                    $familyLogs = $this->logModel->getByCategory((int) $family['id'], $category, min($limit, 200));
+                } else {
+                    $familyLogs = $this->logModel->getByFamily((int) $family['id'], min($limit, 200));
+                }
                 $logs = array_merge($logs, $familyLogs);
             }
             usort($logs, fn($a, $b) => strcmp($b['created_at'], $a['created_at']));
