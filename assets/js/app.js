@@ -338,70 +338,64 @@ function renderDeviceCard(device, compact = false) {
     let controls = '';
 
     if (device.type_code === 'light' || device.type_code === 'switch' || device.type_code === 'outlet') {
-        controls = `
-            <div class="device-controls">
-                <button class="device-btn ${state.on ? 'active' : ''" onclick="controlDevice(${device.id}, 'toggle')">
-                    ${state.on ? 'ON' : 'OFF'}
-                </button>
-            </div>
-        `;
+        const btnClass = state.on ? 'active' : '';
+        const btnText = state.on ? 'ON' : 'OFF';
+        controls = '<div class="device-controls">' +
+            '<button class="device-btn ' + btnClass + '" onclick="controlDevice(' + device.id + ', \x27toggle\x27)">' + btnText + '</button>' +
+            '</div>';
 
         if (device.type_code === 'light' && !compact) {
-            controls += `
-                <input type="range" class="device-slider" min="0" max="100" value="${state.brightness || 100"
-                    onchange="controlDevice(${device.id}, 'set_brightness', JSON.parse('{\"brightness\":' + this.value + '}'))">
-            `;
+            const brightness = state.brightness || 100;
+            controls += '<input type="range" class="device-slider" min="0" max="100" value="' + brightness + '"' +
+                ' oninput="controlDeviceWithParam(' + device.id + ', \x27set_brightness\x27, \x27brightness\x27, this.value)">';
         }
     } else if (device.type_code === 'fan') {
-        controls = `
-            <div class="device-controls">
-                <button class="device-btn ${state.on ? 'active' : ''" onclick="controlDevice(${device.id}, 'toggle')">
-                    ${state.on ? 'ON' : 'OFF'}
-                </button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', JSON.parse('{\"speed\":1}'))">1档</button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', JSON.parse('{\"speed\":3}'))">3档</button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', JSON.parse('{\"speed\":5}'))">5档</button>
-            </div>
-        `;
+        const btnClass = state.on ? 'active' : '';
+        const btnText = state.on ? 'ON' : 'OFF';
+        controls = '<div class="device-controls">' +
+            '<button class="device-btn ' + btnClass + '" onclick="controlDevice(' + device.id + ', \x27toggle\x27)">' + btnText + '</button>' +
+            '<button class="device-btn" onclick="controlDeviceWithParam(' + device.id + ', \x27set_speed\x27, \x27speed\x27, 1)">1档</button>' +
+            '<button class="device-btn" onclick="controlDeviceWithParam(' + device.id + ', \x27set_speed\x27, \x27speed\x27, 3)">3档</button>' +
+            '<button class="device-btn" onclick="controlDeviceWithParam(' + device.id + ', \x27set_speed\x27, \x27speed\x27, 5)">5档</button>' +
+            '</div>';
     } else if (device.type_code === 'curtain') {
-        controls = `
-            <div class="device-controls">
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'open')">打开</button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'close')">关闭</button>
-            </div>
-        `;
+        controls = '<div class="device-controls">' +
+            '<button class="device-btn" onclick="controlDevice(' + device.id + ', \x27open\x27)">打开</button>' +
+            '<button class="device-btn" onclick="controlDevice(' + device.id + ', \x27close\x27)">关闭</button>' +
+            '</div>';
     } else if (device.type_code === 'lock') {
-        controls = `
-            <div class="device-controls">
-                <button class="device-btn ${state.lockstate === 'locked' ? 'active' : ''" onclick="controlDevice(${device.id}, 'toggle')">
-                    ${state.lockstate === 'locked' ? '已锁' : '已解锁'}
-                </button>
-            </div>
-        `;
+        const btnClass = state.lockstate === 'locked' ? 'active' : '';
+        const btnText = state.lockstate === 'locked' ? '已锁' : '已解锁';
+        controls = '<div class="device-controls">' +
+            '<button class="device-btn ' + btnClass + '" onclick="controlDevice(' + device.id + ', \x27toggle\x27)">' + btnText + '</button>' +
+            '</div>';
     } else if (device.type_code === 'thermostat') {
-        controls = `
-            <div class="device-state">温度: ${state.temperature}°C / 设定: ${state.setpoint}°C</div>
-        `;
+        controls = '<div class="device-state">温度: ' + state.temperature + '°C / 设定: ' + state.setpoint + '°C</div>';
     } else if (device.type_code.startsWith('sensor_')) {
-        const stateText = device.type_code === 'sensor_motion'
-            ? (state.occupancy ? '有人' : '无人')
-            : device.type_code === 'sensor_door'
-                ? (state.contact ? '关闭' : '打开')
-                : `${state.temperature}°C / ${state.humidity}%';
-        controls = `<div class="device-state">${stateText}</div>`;
+        let stateText = '';
+        if (device.type_code === 'sensor_motion') {
+            stateText = state.occupancy ? '有人' : '无人';
+        } else if (device.type_code === 'sensor_door') {
+            stateText = state.contact ? '关闭' : '打开';
+        } else {
+            stateText = state.temperature + '°C / ' + state.humidity + '%';
+        }
+        controls = '<div class="device-state">' + stateText + '</div>';
     }
 
-    return `
-        <div class="device-card ${isOnline ? '' : 'offline'}" data-device-id="${device.id}">
-            <div class="device-header">
-                <span class="device-icon">${icon}</span>
-                <span class="device-status ${isOnline ? '' : 'offline'}"></span>
-            </div>
-            <div class="device-name">${device.name}</div>
-            <div class="device-room">${device.room_name || device.type_name || ''}</div>
-            ${controls}
-        </div>
-    `;
+    const cardClass = isOnline ? '' : 'offline';
+    const statusClass = isOnline ? '' : 'offline';
+    const roomName = device.room_name || device.type_name || '';
+
+    return '<div class="device-card ' + cardClass + '" data-device-id="' + device.id + '">' +
+        '<div class="device-header">' +
+        '<span class="device-icon">' + icon + '</span>' +
+        '<span class="device-status ' + statusClass + '"></span>' +
+        '</div>' +
+        '<div class="device-name">' + device.name + '</div>' +
+        '<div class="device-room">' + roomName + '</div>' +
+        controls +
+        '</div>';
 }
 
 async function loadDevices() {
@@ -421,7 +415,7 @@ async function loadDevices() {
 
 function renderDevices(devices) {
     const container = document.getElementById('device-list');
-    document.getElementById('device-count').textContent = `${devices.length} 个设备';
+    document.getElementById('device-count').textContent = devices.length + ' 个设备';
 
     if (devices.length === 0) {
         container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><div class="icon">💡</div><p>暂无设备</p><button class="btn btn-primary" onclick="discoverDevices()">发现设备</button></div>';
@@ -511,6 +505,12 @@ async function controlDevice(deviceId, action, params = {}) {
     }
 }
 
+async function controlDeviceWithParam(deviceId, action, key, value) {
+    const params = {};
+    params[key] = isNaN(Number(value)) ? value : Number(value);
+    await controlDevice(deviceId, action, params);
+}
+
 async function discoverDevices() {
     showToast('正在发现设备...', 'info');
     try {
@@ -541,7 +541,7 @@ function showDiscoveredDevices(devices) {
             <div class="form-row">
             <label class="form-check">
                 <input type="checkbox" name="discover-device" value="${device.matter_unique_id}" data-name="${device.name}">
-                ${device.name} (${typeNames[device.type] || device.type)
+                ${device.name} (${typeNames[device.type] || device.type})
             </label>
         `).join('')}
     `;
