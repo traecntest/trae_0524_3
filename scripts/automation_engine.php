@@ -5,29 +5,26 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../core/autoload.php';
 require_once __DIR__ . '/../core/helpers.php';
-require_once __DIR__ . '/migrate.php';
 
 use App\Database\Database;
+use App\Services\AutomationEngine;
 
 $config = require __DIR__ . '/../config/config.php';
+date_default_timezone_set($config['app']['timezone']);
 
-echo "SmartHome Hub 数据库迁移\n";
-echo str_repeat('=', 50) . "\n\n";
+echo "=== SmartHome Hub 自动化引擎 ===\n";
+echo "检查间隔: {$config['automation']['check_interval']}秒\n";
+echo str_repeat('=', 40) . "\n\n";
 
 try {
     Database::configure($config['database']);
-    $pdo = Database::connection();
-
     echo "✓ 数据库连接成功\n\n";
 
-    $migration = new DatabaseMigration($pdo);
-    $results = $migration->migrate();
+    $engine = new AutomationEngine();
+    echo "✓ 自动化引擎已启动\n";
+    echo "按 Ctrl+C 停止运行\n\n";
 
-    foreach ($results as $result) {
-        echo "  {$result}\n";
-    }
-
-    echo "\n✓ 迁移完成\n";
+    $engine->run();
 } catch (\Exception $e) {
     echo "✗ 错误: " . $e->getMessage() . "\n";
     exit(1);

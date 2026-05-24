@@ -1,0 +1,19 @@
+{
+    "name": "smarthome/hub",
+    "description": "SmartHome Hub - 本地部署的智能家居中控系统，支持Matter协议",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "core/"
+        }
+    },
+    "scripts": {
+        "migrate": "php migrations/run.php",
+        "demo": "php scripts/matter_demo.php",
+        "serve": "php -S localhost:8080 router.php"
+    }
+}

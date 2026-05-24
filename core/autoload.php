@@ -19,4 +19,11 @@ spl_autoload_register(function ($class) {
     }
 });
 
+spl_autoload_register(function ($class) {
+    $file = __DIR__ . '/../migrations/' . $class . '.php';
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
 require_once __DIR__ . '/../config/config.php';

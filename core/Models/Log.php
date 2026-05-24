@@ -26,7 +26,7 @@ class Log extends Model
         return $stmt->fetchAll();
     }
 
-    public function add(int $familyId, string $level, string $category, string $message, array $context = [], ?int $userId = null, ?int $deviceId = null): int
+    public function add(?int $familyId, string $level, string $category, string $message, array $context = [], ?int $userId = null, ?int $deviceId = null): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO logs (family_id, user_id, device_id, level, category, message, context) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id');
         $stmt->execute([

@@ -14,7 +14,7 @@ return [
         'database' => 'smarthome',
         'username' => 'smarthome',
         'password' => 'smarthome123',
-        'charset' => 'utf8mb4',
+        'charset' => 'UTF8',
     ],
     'matter' => [
         'bridge_ip' => '127.0.0.1',

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHome Hub - 智能家居中控</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">🏠</div>
+                <h1>SmartHome Hub</h1>
+                <p>智能家居中控系统</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label>用户名 / 邮箱</label>
+                    <input type="text" id="login-username" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="login-password" required placeholder="请输入密码">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">登录</button>
+                <p class="register-link">还没有账号？<a href="#" id="show-register">立即注册</a></p>
+            </form>
+            <form id="register-form" class="login-form hidden">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="reg-username" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="reg-email" required placeholder="请输入邮箱">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="reg-password" required placeholder="至少8位">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">注册</button>
+                <p class="register-link">已有账号？<a href="#" id="show-login">返回登录</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="main-page" class="page">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-small">🏠</div>
+                <span>SmartHome</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>仪表盘</span>
+                </a>
+                <a href="#" class="nav-item" data-page="devices">
+                    <span class="nav-icon">💡</span>
+                    <span>设备管理</span>
+                </a>
+                <a href="#" class="nav-item" data-page="scenes">
+                    <span class="nav-icon">🎬</span>
+                    <span>场景模式</span>
+                </a>
+                <a href="#" class="nav-item" data-page="automations">
+                    <span class="nav-icon">⚡</span>
+                    <span>自动化</span>
+                </a>
+                <a href="#" class="nav-item" data-page="logs">
+                    <span class="nav-icon">📋</span>
+                    <span>日志记录</span>
+                </a>
+                <a href="#" class="nav-item" data-page="alerts">
+                    <span class="nav-icon">⚠️</span>
+                    <span>告警中心</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-avatar" id="user-avatar">👤</span>
+                    <span class="user-name" id="user-name">用户</span>
+                </div>
+                <a href="#" id="logout-btn" class="logout-btn">退出</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <header class="topbar">
+                <h2 id="page-title">仪表盘</h2>
+                <div class="topbar-right">
+                    <span class="status-indicator" id="connection-status">
+                        <span class="status-dot"></span>
+                        <span>连接中...</span>
+                    </span>
+                    <button class="btn btn-secondary" id="refresh-btn">🔄 刷新</button>
+                </div>
+            </header>
+
+            <div id="content-area">
+                <div class="dashboard-page page-content active" data-content="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-icon">💡</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-devices">0</div>
+                                <div class="stat-label">设备总数</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon">🟢</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-online">0</div>
+                                <div class="stat-label">在线设备</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-warning">
+                            <div class="stat-icon">🎬</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-scenes">0</div>
+                                <div class="stat-label">场景模式</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-danger">
+                            <div class="stat-icon">⚠️</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="stat-alerts">0</div>
+                                <div class="stat-label">未读告警</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>快捷场景</h3>
+                                <button class="btn btn-sm btn-primary" onclick="showPage('scenes')">管理</button>
+                            </div>
+                            <div class="quick-scenes" id="quick-scenes"></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>最近日志</h3>
+                                <button class="btn btn-sm btn-primary" onclick="showPage('logs')">查看全部</button>
+                            </div>
+                            <div class="log-list" id="recent-logs"></div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>设备状态</h3>
+                            </div>
+                            <div class="device-grid" id="dashboard-devices"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="devices-page page-content" data-content="devices">
+                    <div class="page-header">
+                        <div class="filter-bar">
+                            <select id="device-family-filter" class="form-control">
+                                <option value="">全部家庭</option>
+                            </select>
+                            <select id="device-room-filter" class="form-control">
+                                <option value="">全部房间</option>
+                            </select>
+                            <select id="device-type-filter" class="form-control">
+                                <option value="">全部类型</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="showDeviceModal()">+ 添加设备</button>
+                    </div>
+
+                    <div class="toolbar">
+                        <button class="btn btn-secondary" onclick="discoverDevices()">🔍 发现设备</button>
+                        <div class="toolbar-right">
+                            <span class="text-muted" id="device-count">0 个设备</span>
+                        </div>
+                    </div>
+
+                    <div class="device-grid" id="device-list"></div>
+                </div>
+
+                <div class="scenes-page page-content" data-content="scenes">
+                    <div class="page-header">
+                        <select id="scene-family-filter" class="form-control">
+                            <option value="">全部家庭</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="showSceneModal()">+ 创建场景</button>
+                    </div>
+                    <div class="scene-grid" id="scene-list"></div>
+                </div>
+
+                <div class="automations-page page-content" data-content="automations">
+                    <div class="page-header">
+                        <select id="automation-family-filter" class="form-control">
+                            <option value="">全部家庭</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="showAutomationModal()">+ 创建规则</button>
+                    </div>
+                    <div class="automation-list" id="automation-list"></div>
+                </div>
+
+                <div class="logs-page page-content" data-content="logs">
+                    <div class="page-header">
+                        <select id="log-family-filter" class="form-control">
+                            <option value="">全部家庭</option>
+                        </select>
+                        <select id="log-category-filter" class="form-control">
+                            <option value="">全部类别</option>
+                            <option value="device">设备</option>
+                            <option value="scene">场景</option>
+                            <option value="automation">自动化</option>
+                            <option value="matter">Matter</option>
+                            <option value="family">家庭</option>
+                            <option value="system">系统</option>
+                        </select>
+                    </div>
+                    <div class="log-table-container">
+                        <table class="log-table" id="log-table">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>级别</th>
+                                    <th>类别</th>
+                                    <th>消息</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alerts-page page-content" data-content="alerts">
+                    <div class="page-header">
+                        <button class="btn btn-secondary" onclick="markAllAlertsRead()">全部标记已读</button>
+                    </div>
+                    <div class="alert-list" id="alert-list"></div>
+                </div>
+
+                <div class="settings-page page-content" data-content="settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>家庭管理</h3>
+                            <button class="btn btn-primary" onclick="showFamilyModal()">+ 创建家庭</button>
+                        </div>
+                        <div class="family-list" id="family-list"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>房间管理</h3>
+                            <button class="btn btn-primary" onclick="showRoomModal()">+ 创建房间</button>
+                        </div>
+                        <div class="room-list" id="room-list"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>系统信息</h3>
+                        </div>
+                        <div class="system-info" id="system-info"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-container" class="modal-container">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">标题</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer" id="modal-footer"></div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>

@@ -34,7 +34,7 @@ class Database
                     PDO::ATTR_EMULATE_PREPARES => false,
                 ]);
 
-                self::$instance->exec("SET NAMES 'utf8mb4'");
+                self::$instance->exec("SET NAMES 'UTF8'");
                 self::$instance->exec("SET timezone = 'Asia/Shanghai'");
             } catch (PDOException $e) {
                 throw new \RuntimeException('数据库连接失败: ' . $e->getMessage());
