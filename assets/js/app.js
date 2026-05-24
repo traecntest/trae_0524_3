@@ -284,7 +284,7 @@ function renderQuickScenes(scenes) {
 
     container.innerHTML = scenes.map(scene => `
         <button class="quick-scene-btn" onclick="executeScene(${scene.id})">
-            <span class="icon">${sceneIcons[scene.icon] || '🎭'</span>
+            <span class="icon">${sceneIcons[scene.icon] || '🎭'}</span>
             <span class="name">${scene.name}</span>
         </button>
     `).join('');
@@ -349,7 +349,7 @@ function renderDeviceCard(device, compact = false) {
         if (device.type_code === 'light' && !compact) {
             controls += `
                 <input type="range" class="device-slider" min="0" max="100" value="${state.brightness || 100"
-                    onchange="controlDevice(${device.id}, 'set_brightness', {brightness: this.value})">
+                    onchange="controlDevice(${device.id}, 'set_brightness', JSON.parse('{\"brightness\":' + this.value + '}'))">
             `;
         }
     } else if (device.type_code === 'fan') {
@@ -358,9 +358,9 @@ function renderDeviceCard(device, compact = false) {
                 <button class="device-btn ${state.on ? 'active' : ''" onclick="controlDevice(${device.id}, 'toggle')">
                     ${state.on ? 'ON' : 'OFF'}
                 </button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', {speed: 1})">1档</button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', {speed: 3})">3档</button>
-                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', {speed: 5})">5档</button>
+                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', JSON.parse('{\"speed\":1}'))">1档</button>
+                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', JSON.parse('{\"speed\":3}'))">3档</button>
+                <button class="device-btn" onclick="controlDevice(${device.id}, 'set_speed', JSON.parse('{\"speed\":5}'))">5档</button>
             </div>
         `;
     } else if (device.type_code === 'curtain') {
